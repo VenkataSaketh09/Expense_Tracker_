@@ -33,15 +33,11 @@ const AuthLayout = ({children}) => {
           {/* Static geometric shapes with violet borders */}
           <div className='absolute top-16 left-16 w-34 h-34 border-8 rounded-2xl border-purple-600'></div>
           <div className='absolute top-32 right-20 w-32 h-16 border-2 border-purple-500'></div>
-          {/* <div className='absolute top-60 left-32 w-16 h-32 border border-violet-300'></div> */}
-          <div className='absolute bottom-40 left-16 w-28 h-28 border-2 border-purple-500 rotate-45'></div>
-          <div className='absolute bottom-184 left-25 w-14 h-36 border-2 border-indigo-700 rotate-45'></div>
-          {/* <div className='absolute top-80 right-40 w-20 h-20 border-2 border-purple-400 rotate-12'></div> */}
-          <div className='absolute bottom-20 left-32 w-36 h-24 border-2 border-violet-500 -rotate-1'></div>
-          {/* <div className='absolute top-48 left-8 w-12 h-48 border border-purple-300'></div> */}
+          <div className='absolute bottom-30 left-16 w-28 h-28 border-2 border-purple-500 rotate-45'></div>
+          <div className='absolute bottom-124 left-15 w-14 h-36 border-2 border-indigo-700 rotate-45'></div>
+          <div className='absolute bottom-10 left-32 w-36 h-24 border-2 border-violet-500 -rotate-1'></div>
           <div className='absolute top-20 right-8 w-16 h-16 border-2 border-violet-600'></div>
-          {/* <div className='absolute bottom-80 left-40 w-28 h-12 border border-purple-500'></div> */}
-          <div className='absolute top-62 right-20 w-14 h-36 border-2 border-indigo-700 rotate-45'></div>
+          <div className='absolute top-82 right-20 w-14 h-36 border-2 border-indigo-700 rotate-45'></div>
           <div className='absolute bottom-16 right-16 w-34 h-34 border-8 rounded-2xl border-purple-600'></div>
           
           {/* Additional corner elements */}
