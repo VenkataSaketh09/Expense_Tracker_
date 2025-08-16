@@ -92,7 +92,7 @@ const Home = () => {
         {/* Second Row - Expenses and Last 30 Days Expenses */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <First5Expenses
-            transactions={dashboardData?.last30daysExpenses?.transactions || []}
+            transactions={dashboardData?.recentTransactions || []}
             onSeeMore={() => navigate("/expense")}
           />
           <Last30DaysExpenses
