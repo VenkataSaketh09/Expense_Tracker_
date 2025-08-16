@@ -19,18 +19,22 @@ const First5Expenses = ({ transactions, onSeeMore }) => {
         </button>
       </div>
       <div className="space-y-2">
-        {transactions?.slice(0, 5)?.map((expense) => (
-          <TransactionsInfoCard
-            key={expense._id}
-            title={expense.category}
-            icon={expense.icon}
-            date={moment(expense.date).format("DD-MMM-YYYY")}
-            amount={expense.amount}
-            type={expense.type || "expense"}
-            hideDeleteBtn
-          />
-        ))}
-        {(!transactions || transactions.length === 0) && (
+        {transactions
+          ?.filter((transaction) => transaction.type === "expense")
+          ?.slice(0, 5)
+          ?.map((expense) => (
+            <TransactionsInfoCard
+              key={expense._id}
+              title={expense.category}
+              icon={expense.icon}
+              date={moment(expense.date).format("DD-MMM-YYYY")}
+              amount={expense.amount}
+              type={expense.type || "expense"}
+              hideDeleteBtn
+            />
+          ))}
+        {(!transactions ||
+          transactions.filter((t) => t.type === "expense").length === 0) && (
           <div className="text-center py-8 text-gray-500">
             <p className="text-sm sm:text-base">
               No expense transactions found
