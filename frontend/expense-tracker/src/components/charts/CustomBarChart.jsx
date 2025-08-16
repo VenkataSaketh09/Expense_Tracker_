@@ -11,6 +11,14 @@ import {
 import moment from "moment";
 
 const CustomBarChart = ({ data, title }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="h-full flex items-center justify-center text-gray-500">
+        <p className="text-sm">No data available</p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full">
       <ResponsiveContainer width="100%" height="100%">

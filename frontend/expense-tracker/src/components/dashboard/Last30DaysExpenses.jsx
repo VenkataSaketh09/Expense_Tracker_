@@ -6,16 +6,14 @@ import moment from "moment";
 const Last30DaysExpenses = ({ transactions, onSeeMore }) => {
   // Group transactions by date and sum amounts
   const groupedData = transactions?.reduce((acc, transaction) => {
-    if (transaction.type === "expense") {
-      const date = moment(transaction.date).format("YYYY-MM-DD");
-      if (acc[date]) {
-        acc[date].amount += transaction.amount;
-      } else {
-        acc[date] = {
-          date: transaction.date,
-          amount: transaction.amount,
-        };
-      }
+    const date = moment(transaction.date).format("YYYY-MM-DD");
+    if (acc[date]) {
+      acc[date].amount += transaction.amount;
+    } else {
+      acc[date] = {
+        date: transaction.date,
+        amount: transaction.amount,
+      };
     }
     return acc;
   }, {});

@@ -6,16 +6,14 @@ const COLORS = ["#8B5CF6", "#EF4444", "#F59E0B", "#3B82F6"];
 const IncomeSourcesChart = ({ transactions }) => {
   // Group income by source and sum amounts
   const groupedData = transactions?.reduce((acc, transaction) => {
-    if (transaction.type === "income") {
-      const source = transaction.source || "Other";
-      if (acc[source]) {
-        acc[source].amount += transaction.amount;
-      } else {
-        acc[source] = {
-          name: source,
-          amount: transaction.amount,
-        };
-      }
+    const source = transaction.source || "Other";
+    if (acc[source]) {
+      acc[source].amount += transaction.amount;
+    } else {
+      acc[source] = {
+        name: source,
+        amount: transaction.amount,
+      };
     }
     return acc;
   }, {});
