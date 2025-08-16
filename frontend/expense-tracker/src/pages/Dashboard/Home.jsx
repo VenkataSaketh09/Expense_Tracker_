@@ -70,7 +70,7 @@ const Home = () => {
         </div>
 
         {/* Dashboard Content Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {/* Recent Transactions - Takes 2 columns on desktop */}
           <div className="xl:col-span-2">
             <RecentTransactions
@@ -86,16 +86,10 @@ const Home = () => {
               totalIncome={dashboardData?.totalIncome || 0}
               totalExpense={dashboardData?.totalExpense || 0}
             />
-            <ExpenseTransactions
-              transactions={
-                dashboardData?.last30daysExpenses?.transactions || []
-              }
-              onSeeMore={() => navigate("/expense")}
-            />
           </div>
         </div>
 
-        {/* Second Row - First 5 Expenses and Last 30 Days Expenses */}
+        {/* Second Row - Expenses and Last 30 Days Expenses */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <First5Expenses
             transactions={dashboardData?.last30daysExpenses?.transactions || []}
@@ -107,10 +101,10 @@ const Home = () => {
           />
         </div>
 
-        {/* Third Row - Income Sources Chart and Last 5 Income */}
+        {/* Third Row - Last 60 Days Income Chart and Income Transactions */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
           <IncomeSourcesChart
-            transactions={dashboardData?.recentTransactions || []}
+            transactions={dashboardData?.last60daysIncome?.transactions || []}
           />
           <Last5Income
             transactions={dashboardData?.recentTransactions || []}

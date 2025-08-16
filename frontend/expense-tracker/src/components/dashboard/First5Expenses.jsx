@@ -8,7 +8,7 @@ const First5Expenses = ({ transactions, onSeeMore }) => {
     <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-100 h-full">
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <h5 className="text-lg sm:text-xl font-semibold text-gray-900">
-          Recent Expenses
+          Expenses
         </h5>
         <button
           onClick={onSeeMore}
@@ -26,7 +26,7 @@ const First5Expenses = ({ transactions, onSeeMore }) => {
             icon={expense.icon}
             date={moment(expense.date).format("DD-MMM-YYYY")}
             amount={expense.amount}
-            type="expense"
+            type={expense.type || "expense"}
             hideDeleteBtn
           />
         ))}

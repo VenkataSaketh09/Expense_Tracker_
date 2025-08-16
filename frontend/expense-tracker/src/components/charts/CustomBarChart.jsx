@@ -24,6 +24,9 @@ const CustomBarChart = ({ data, title }) => {
             tickFormatter={(value) => moment(value).format("DD/MM")}
             fontSize={12}
             stroke="#6b7280"
+            angle={-45}
+            textAnchor="end"
+            height={60}
           />
           <YAxis
             fontSize={12}
@@ -50,7 +53,7 @@ const CustomBarChart = ({ data, title }) => {
               return null;
             }}
           />
-          <Bar dataKey="amount" fill="#dc2626" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="amount" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

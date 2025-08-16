@@ -1,7 +1,7 @@
 import React from "react";
 import CustomPieChart from "../charts/CustomPieChart";
 
-const COLORS = ["#10B981", "#3B82F6", "#F59E0B", "#EF4444", "#8B5CF6"];
+const COLORS = ["#8B5CF6", "#EF4444", "#F59E0B", "#3B82F6"];
 
 const IncomeSourcesChart = ({ transactions }) => {
   // Group income by source and sum amounts
@@ -34,7 +34,7 @@ const IncomeSourcesChart = ({ transactions }) => {
     <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-100 h-full">
       <div className="mb-4 sm:mb-6">
         <h5 className="text-lg sm:text-xl font-semibold text-gray-900">
-          Income Sources
+          Last 60 Days Income
         </h5>
       </div>
       <div className="h-64 sm:h-80">
@@ -44,7 +44,7 @@ const IncomeSourcesChart = ({ transactions }) => {
             label="Total Income"
             totalAmount={`$${totalIncome}`}
             colors={COLORS}
-            showTextAnchor={false}
+            showTextAnchor={true}
           />
         ) : (
           <div className="flex items-center justify-center h-full text-gray-500">
