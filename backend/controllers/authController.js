@@ -70,4 +70,104 @@ const getUserInfo = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, getUserInfo };
+// Update user profile
+const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { userName, email, profileImageUrl } = req.body;
+
+    // Validate input
+    if (!userName || !email) {
+      return res
+        .status(400)
+        .json({ message: "Username and email are required" });
+    }
+
+    // Check if email is already taken by another user
+    const existingUser = await User.findOne({
+      email,
+      _id: { $ne: userId },
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "Email is already taken" });
+    }
+
+    // Update user profile
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        userName,
+        email,
+        profileImageUrl,
+      },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: "Internal Server Error: " + err.message,
+    });
+  }
+};
+
+// Update user password
+const updateUserPassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    // Validate input
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        message: "Current password and new password are required",
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: "New password must be at least 6 characters long",
+      });
+    }
+
+    // Get user with password
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await user.comparePassword(currentPassword);
+    if (!isCurrentPasswordValid) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      message: "Password updated successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: "Internal Server Error: " + err.message,
+    });
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  getUserInfo,
+  updateUserProfile,
+  updateUserPassword,
+};
