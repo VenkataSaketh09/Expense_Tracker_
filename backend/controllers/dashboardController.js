@@ -11,14 +11,9 @@ const getDashboardData = async (req, res) => {
     const pipeline = [
       { $match: { userId: userObjectId } },
       { $group: { _id: null, total: { $sum: "$amount" } } },
-      { $group: { _id: null, total: { $sum: "$amount" } } },
     ];
 
     const totalIncome = await Income.aggregate(pipeline);
-    console.log("Total Income", {
-      totalIncome,
-      userId: isValidObjectId(userId),
-    });
     console.log("Total Income", {
       totalIncome,
       userId: isValidObjectId(userId),
@@ -69,13 +64,8 @@ const getDashboardData = async (req, res) => {
       (sum, transaction) => sum + transaction.amount,
       0
     );
-    //get total income for last 60 days
-    const last60DaysIncome = last60DaysIncomeTransactions.reduce(
-      (sum, transaction) => sum + transaction.amount,
-      0
-    );
 
-    //get expense transactions in the last30 days
+    //get expense transactions in the last 30 days
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     console.log("30 days ago date:", thirtyDaysAgo);
 
@@ -111,23 +101,12 @@ const getDashboardData = async (req, res) => {
       }));
     }
 
-    //get total income for last 30 days
+    //get total expense for last 30 days
     const last30DaysExpense = last30DaysExpenseTransactions.reduce(
       (sum, transaction) => sum + transaction.amount,
       0
     );
-    //fetch last 5 transactions(income+expense)
-    // fetch last 5 transactions from income
-    const last5Income = (
-      await Income.find({ userId }).sort({ date: -1 }).limit(5)
-    ).map((transaction) => ({
-      ...transaction.toObject(),
-      type: "income",
-    }));
-    const last30DaysExpense = last30DaysExpenseTransactions.reduce(
-      (sum, transaction) => sum + transaction.amount,
-      0
-    );
+
     //fetch last 5 transactions(income+expense)
     // fetch last 5 transactions from income
     const last5Income = (
@@ -137,13 +116,6 @@ const getDashboardData = async (req, res) => {
       type: "income",
     }));
 
-    // fetch last 5 transactions from expense
-    const last5Expense = (
-      await Expense.find({ userId }).sort({ date: -1 }).limit(5)
-    ).map((transaction) => ({
-      ...transaction.toObject(),
-      type: "expense",
-    }));
     // fetch last 5 transactions from expense
     const last5Expense = (
       await Expense.find({ userId }).sort({ date: -1 }).limit(5)
@@ -181,31 +153,11 @@ const getDashboardData = async (req, res) => {
       },
       recentTransactions: last5Transactions,
     });
-    res.json({
-      totalBalance:
-        (totalIncome[0]?.total || 0) - (totalExpense[0]?.total || 0),
-      totalIncome: totalIncome[0]?.total || 0,
-      totalExpense: totalExpense[0]?.total || 0,
-      last30daysExpenses: {
-        total: last30DaysExpense,
-        transactions: last30DaysExpenseTransactions,
-      },
-      last60daysIncome: {
-        total: last60DaysIncome,
-        transactions: last60DaysIncomeTransactions,
-      },
-      recentTransactions: last5Transactions,
-    });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ error: "Internal Server Error: " + err.message });
     return res
       .status(500)
       .json({ error: "Internal Server Error: " + err.message });
   }
 };
-
-export { getDashboardData };
 
 export { getDashboardData };

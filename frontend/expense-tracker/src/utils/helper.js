@@ -1,7 +1,5 @@
 import moment from "moment";
 
-import moment from "moment";
-
 const validateEmail = (email) => {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return regex.test(email);

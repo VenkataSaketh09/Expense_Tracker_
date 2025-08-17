@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
-import { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
-import { useEffect } from "react";
 import IncomeOverview from "../../components/income/IncomeOverview";
 import IncomeTransactionsList from "../../components/income/IncomeTransactionsList";
 import Modal from "../../components/Layouts/Modal";
