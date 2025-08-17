@@ -55,7 +55,7 @@ const CustomLineChart = ({ data, title }) => {
             stroke="#64748b"
             axisLine={false}
             tickLine={false}
-            tickFormatter={(value) =>  `${addThousandsSeparator(value)}`}
+            tickFormatter={(value) => `${addThousandsSeparator(value)}`}
             domain={[0, "dataMax"]}
             tick={{ fill: "#64748b" }}
           />

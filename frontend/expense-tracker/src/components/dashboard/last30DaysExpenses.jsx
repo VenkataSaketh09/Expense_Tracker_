@@ -6,25 +6,23 @@ import moment from "moment";
 const Last30DaysExpenses = ({ transactions, onSeeMore }) => {
   // Group transactions by date and sum amounts
   const groupedData = transactions?.reduce((acc, transaction) => {
-    if (transaction.type === "expense") {
-      const date = moment(transaction.date).format("YYYY-MM-DD");
-      if (acc[date]) {
-        acc[date].amount += parseFloat(transaction.amount) || 0;
-      } else {
-        acc[date] = {
-          month:moment(transaction.date).format("Do MMM"),
-          date: transaction.date,
-          amount: parseFloat(transaction.amount) || 0,
-          category:transaction.category || "Expense"
-        };
-      }
+    const date = moment(transaction.date).format("YYYY-MM-DD");
+    if (acc[date]) {
+      acc[date].amount += parseFloat(transaction.amount) || 0;
+    } else {
+      acc[date] = {
+        month: moment(transaction.date).format("Do MMM"),
+        date: transaction.date,
+        amount: parseFloat(transaction.amount) || 0,
+        category: transaction.category || "Expense",
+      };
     }
     return acc;
   }, {});
 
-  const chartData = Object.values(groupedData || {}).sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
-  ).slice(-10);
+  const chartData = Object.values(groupedData || {})
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .slice(-10); // Show last 10 days for better visualization
 
   return (
     <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-100 h-full">
