@@ -79,8 +79,12 @@ const Home = () => {
             />
           </div>
 
+
           {/* Finance Overview - Takes 1 column on desktop */}
           <div className="xl:col-span-1">
+            <FinanceOverview
+              totalBalance={dashboardData?.totalBalance || 0}
+              totalIncome={dashboardData?.totalIncome || 0}
             <FinanceOverview
               totalBalance={dashboardData?.totalBalance || 0}
               totalIncome={dashboardData?.totalIncome || 0}

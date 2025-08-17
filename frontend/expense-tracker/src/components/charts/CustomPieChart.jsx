@@ -8,6 +8,16 @@ import {
   Legend,
 } from "recharts";
 import customTooltip from "./customTooltip";
+import React from "react";
+import {
+  PieChart,
+  Pie,
+  Tooltip,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import customTooltip from "./customTooltip";
 
 const CustomPieChart = ({
   data,
@@ -27,6 +37,8 @@ const CustomPieChart = ({
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
+    <ResponsiveContainer width="100%" height="100%">
+      <PieChart>
         <Pie
           data={data}
           cx="50%"
@@ -36,7 +48,11 @@ const CustomPieChart = ({
           paddingAngle={2}
           dataKey="amount"
           nameKey="name"
+          nameKey="name"
         >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+          ))}
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
@@ -44,10 +60,14 @@ const CustomPieChart = ({
         <Tooltip content={customTooltip} />
         <Legend
           verticalAlign="bottom"
+        <Tooltip content={customTooltip} />
+        <Legend
+          verticalAlign="bottom"
           height={36}
           iconType="circle"
           wrapperStyle={{
             paddingTop: "20px",
+            fontSize: "12px",
             fontSize: "12px",
           }}
           formatter={(value, entry) => value}
@@ -59,10 +79,22 @@ const CustomPieChart = ({
               y="45%"
               textAnchor="middle"
               dominantBaseline="middle"
+          <>
+            <text
+              x="50%"
+              y="45%"
+              textAnchor="middle"
+              dominantBaseline="middle"
               className="fill-gray-600 text-xs sm:text-sm font-medium"
             >
               {label}
+              {label}
             </text>
+            <text
+              x="50%"
+              y="55%"
+              textAnchor="middle"
+              dominantBaseline="middle"
             <text
               x="50%"
               y="55%"
@@ -73,10 +105,19 @@ const CustomPieChart = ({
               {totalAmount}
             </text>
           </>
+              {totalAmount}
+            </text>
+          </>
         )}
       </PieChart>
     </ResponsiveContainer>
   );
 };
+      </PieChart>
+    </ResponsiveContainer>
+  );
+};
+
+export default CustomPieChart;
 
 export default CustomPieChart;
