@@ -14,7 +14,7 @@ const InfoCard = ({ icon, label, value, color }) => {
             {label}
           </h6>
           <span className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
-            ${value}
+            ₹{value}
           </span>
         </div>
       </div>

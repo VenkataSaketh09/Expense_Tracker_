@@ -126,4 +126,4 @@ const downloadIncomeExcel = async (req, res) => {
       .json({ error: "Internal Server Error" + err.message });
   }
 };
-export { addIncome, getIncome, deleteIncome, downloadIncomeExcel };
+export { addIncome, getIncome, deleteIncome, downloadIncomeExcel};
