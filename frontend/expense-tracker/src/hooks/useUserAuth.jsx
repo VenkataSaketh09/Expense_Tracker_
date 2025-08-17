@@ -8,9 +8,20 @@ export const useUserAuth = () => {
   const { user, clearUser, updateUser } = useContext(UserContext);
   const navigate = useNavigate();
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    // If no token, redirect to login
+    if (!token) {
+      clearUser();
+      navigate("/login");
+      return;
+    }
+
+    // If user already exists, no need to fetch again
     if (user) {
       return;
     }
+
     let isMounted = true;
     const fetchUserInfo = async () => {
       try {
@@ -30,5 +41,5 @@ export const useUserAuth = () => {
     return () => {
       isMounted = false;
     };
-  }, [updateUser, navigate, clearUser]);
+  }, [user, updateUser, navigate, clearUser]);
 };

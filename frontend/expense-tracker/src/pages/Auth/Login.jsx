@@ -13,8 +13,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const {updateUser} = useContext(UserContext);
-  
+  const { updateUser } = useContext(UserContext);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateEmail(email)) {
@@ -35,7 +35,7 @@ const Login = () => {
       const { token, user } = response.data;
       if (token) {
         localStorage.setItem("token", token);
-        updateUser(user);
+        updateUser(response.data); // Store the entire response to match getUserInfo structure
         navigate("/dashboard");
       }
     } catch (err) {
@@ -89,8 +89,16 @@ const Login = () => {
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
                 <p className="text-xs sm:text-sm text-red-600 font-medium flex items-center">
-                  <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  <svg
+                    className="w-4 h-4 mr-2 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   {error}
                 </p>
@@ -98,8 +106,8 @@ const Login = () => {
             )}
 
             {/* Login Button */}
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 sm:py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300 text-sm sm:text-base"
             >
               Sign In
@@ -121,8 +129,8 @@ const Login = () => {
             <div className="text-center">
               <p className="text-sm sm:text-base text-gray-600">
                 Don't have an Account?{" "}
-                <Link 
-                  className="font-semibold text-purple-600 hover:text-purple-700 underline decoration-2 underline-offset-2 transition-colors duration-200" 
+                <Link
+                  className="font-semibold text-purple-600 hover:text-purple-700 underline decoration-2 underline-offset-2 transition-colors duration-200"
                   to="/signup"
                 >
                   Create Account

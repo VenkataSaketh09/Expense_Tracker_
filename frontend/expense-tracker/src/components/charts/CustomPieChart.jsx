@@ -35,6 +35,7 @@ const CustomPieChart = ({
           outerRadius={90}
           paddingAngle={2}
           dataKey="amount"
+          nameKey="name"
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
@@ -49,6 +50,7 @@ const CustomPieChart = ({
             paddingTop: "20px",
             fontSize: "12px",
           }}
+          formatter={(value, entry) => value}
         />
         {showTextAnchor && (
           <>
