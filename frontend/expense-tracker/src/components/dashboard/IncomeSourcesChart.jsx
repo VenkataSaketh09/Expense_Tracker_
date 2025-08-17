@@ -1,34 +1,38 @@
 import React from "react";
 import CustomPieChart from "../charts/CustomPieChart";
 
-const COLORS = ["#8B5CF6", "#EF4444", "#F59E0B", "#3B82F6"];
+const COLORS = [
+  "#8B5CF6", // Purple
+  "#EF4444", // Red
+  "#F59E0B", // Orange
+  "#3B82F6", // Blue
+  "#10B981", // Green
+  "#F97316", // Orange-600
+  "#8B5A2B", // Brown
+  "#EC4899", // Pink
+];
 
 const IncomeSourcesChart = ({ transactions }) => {
   // Group income by source and sum amounts
   const groupedData = transactions?.reduce((acc, transaction) => {
-    if (transaction.type === "income") {
-      const source = transaction.source || "Other";
-      if (acc[source]) {
-        acc[source].amount += transaction.amount;
-      } else {
-        acc[source] = {
-          name: source,
-          amount: transaction.amount,
-        };
-      }
+    const source = transaction.source || "Other";
+    if (acc[source]) {
+      acc[source].amount += parseFloat(transaction.amount) || 0;
+    } else {
+      acc[source] = {
+        name: source,
+        amount: parseFloat(transaction.amount) || 0,
+      };
     }
     return acc;
   }, {});
 
-  // Get top 5 sources by amount
-  const top5Sources = Object.values(groupedData || {})
+  // Get all sources by amount (no limit to show all sources)
+  const chartData = Object.values(groupedData || {})
     .sort((a, b) => b.amount - a.amount)
-    .slice(0, 5);
+    .filter((source) => source.amount > 0); // Only show sources with positive amounts
 
-  const totalIncome = top5Sources.reduce(
-    (sum, source) => sum + source.amount,
-    0
-  );
+  const totalIncome = chartData.reduce((sum, source) => sum + source.amount, 0);
 
   return (
     <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-100 h-full">
@@ -38,11 +42,11 @@ const IncomeSourcesChart = ({ transactions }) => {
         </h5>
       </div>
       <div className="h-64 sm:h-80">
-        {top5Sources.length > 0 ? (
+        {chartData.length > 0 ? (
           <CustomPieChart
-            data={top5Sources}
+            data={chartData}
             label="Total Income"
-            totalAmount={`$${totalIncome}`}
+            totalAmount={`₹${totalIncome.toLocaleString()}`}
             colors={COLORS}
             showTextAnchor={true}
           />

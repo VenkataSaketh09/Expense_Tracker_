@@ -5,6 +5,8 @@ import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import { useEffect } from "react";
 import IncomeOverview from "../../components/income/IncomeOverview";
+import Modal from "../../components/Layouts/Modal";
+import AddIncomeForm from "../../components/income/AddIncomeForm";
 const Income = () => {
   const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false);
   const [incomeData, setIncomeData] = useState([]);
@@ -47,6 +49,12 @@ const Income = () => {
             />
           </div>
         </div>
+        <Modal isOpen={openAddIncomeModal} onClose={()=>setOpenAddIncomeModal(false)} title="Add Income">
+          <div>
+            <AddIncomeForm onAddIncome={handleAddIncome}/>
+          </div>
+
+        </Modal>
       </div>
     </DashboardLayout>
   );

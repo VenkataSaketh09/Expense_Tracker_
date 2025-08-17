@@ -35,7 +35,7 @@ const Login = () => {
       const { token, user } = response.data;
       if (token) {
         localStorage.setItem("token", token);
-        updateUser(user);
+        updateUser(response.data);
         navigate("/dashboard");
       }
     } catch (err) {

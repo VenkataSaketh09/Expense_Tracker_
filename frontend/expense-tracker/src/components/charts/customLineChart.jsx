@@ -1,16 +1,18 @@
 import React from "react";
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Area,
+  AreaChart,
 } from "recharts";
 import { addThousandsSeparator } from "../../utils/helper";
 
-const CustomBarChart = ({ data, title }) => {
+const CustomLineChart = ({ data, title }) => {
   // If no data, show empty state
   if (!data || data.length === 0) {
     return (
@@ -23,11 +25,16 @@ const CustomBarChart = ({ data, title }) => {
   return (
     <div className="h-full w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart
+        <AreaChart
           data={data}
           margin={{ top: 20, right: 15, left: 10, bottom: 40 }}
-          barCategoryGap="20%"
         >
+          <defs>
+            <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.05} />
+            </linearGradient>
+          </defs>
           <CartesianGrid
             strokeDasharray="3 3"
             stroke="#f1f5f9"
@@ -48,7 +55,7 @@ const CustomBarChart = ({ data, title }) => {
             stroke="#64748b"
             axisLine={false}
             tickLine={false}
-            tickFormatter={(value) => `${addThousandsSeparator(value)}`}
+            tickFormatter={(value) =>  `${addThousandsSeparator(value)}`}
             domain={[0, "dataMax"]}
             tick={{ fill: "#64748b" }}
           />
@@ -68,10 +75,10 @@ const CustomBarChart = ({ data, title }) => {
                           ₹{addThousandsSeparator(payload[0].value)}
                         </span>
                       </p>
-                      {data.source && (
+                      {data.category && (
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium">Source:</span>{" "}
-                          <span className="text-gray-900">{data.source}</span>
+                          <span className="font-medium">Category:</span>{" "}
+                          <span className="text-gray-900">{data.category}</span>
                         </p>
                       )}
                     </div>
@@ -80,25 +87,31 @@ const CustomBarChart = ({ data, title }) => {
               }
               return null;
             }}
-            cursor={{ fill: "rgba(139, 92, 246, 0.05)" }}
+            cursor={{ stroke: "#8b5cf6", strokeWidth: 2 }}
           />
-          <Bar
+          <Area
+            type="monotone"
             dataKey="amount"
+            stroke="#8b5cf6"
+            strokeWidth={3}
             fill="url(#colorGradient)"
-            radius={[6, 6, 0, 0]}
-            maxBarSize={60}
+            dot={{
+              fill: "#8b5cf6",
+              strokeWidth: 3,
+              stroke: "#ffffff",
+              r: 5,
+            }}
+            activeDot={{
+              r: 7,
+              fill: "#8b5cf6",
+              stroke: "#ffffff",
+              strokeWidth: 3,
+            }}
           />
-          <defs>
-            <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#a855f7" stopOpacity={1} />
-              <stop offset="50%" stopColor="#8b5cf6" stopOpacity={1} />
-              <stop offset="100%" stopColor="#7c3aed" stopOpacity={1} />
-            </linearGradient>
-          </defs>
-        </BarChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-export default CustomBarChart;
+export default CustomLineChart;

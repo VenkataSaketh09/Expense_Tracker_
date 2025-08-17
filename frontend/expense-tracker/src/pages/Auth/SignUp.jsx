@@ -50,7 +50,7 @@ const SignUp = () => {
       const { token, user } = response.data;
       if (token) {
         localStorage.setItem("token", token);
-        updateUser(user);
+        updateUser(response.data);
         navigate("/dashboard");
       }
     } catch (error) {
@@ -173,7 +173,7 @@ const SignUp = () => {
                   ))}
                 </div>
                 <p className="text-xs text-gray-500">
-                  Password strength: {
+                  Password strength:{" "} {
                     password.length >= 8 ? (
                       <span className="text-green-600 font-medium">Strong</span>
                     ) : password.length >= 6 ? (

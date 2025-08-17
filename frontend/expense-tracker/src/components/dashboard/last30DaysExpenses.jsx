@@ -9,11 +9,13 @@ const Last30DaysExpenses = ({ transactions, onSeeMore }) => {
     if (transaction.type === "expense") {
       const date = moment(transaction.date).format("YYYY-MM-DD");
       if (acc[date]) {
-        acc[date].amount += transaction.amount;
+        acc[date].amount += parseFloat(transaction.amount) || 0;
       } else {
         acc[date] = {
+          month:moment(transaction.date).format("Do MMM"),
           date: transaction.date,
-          amount: transaction.amount,
+          amount: parseFloat(transaction.amount) || 0,
+          category:transaction.category || "Expense"
         };
       }
     }
@@ -22,7 +24,7 @@ const Last30DaysExpenses = ({ transactions, onSeeMore }) => {
 
   const chartData = Object.values(groupedData || {}).sort(
     (a, b) => new Date(a.date) - new Date(b.date)
-  );
+  ).slice(-10);
 
   return (
     <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-100 h-full">

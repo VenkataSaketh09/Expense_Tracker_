@@ -8,6 +8,12 @@ export const useUserAuth = () => {
   const { user, clearUser, updateUser } = useContext(UserContext);
   const navigate = useNavigate();
   useEffect(() => {
+    const token=localStorage.getItem("token");
+    if(!token){
+      clearUser(),
+      navigate('/login');
+      return;
+    }
     if (user) {
       return;
     }
