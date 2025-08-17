@@ -11,12 +11,16 @@ import { addThousandsSeparator } from "../../utils/helper";
 import RecentTransactions from "../../components/dashboard/RecentTransactions";
 import FinanceOverview from "../../components/dashboard/FinanceOverview";
 import ExpenseTransactions from "../../components/dashboard/ExpenseTransactions";
+import First5Expenses from "../../components/dashboard/First5Expenses";
+import Last30DaysExpenses from "../../components/dashboard/last30DaysExpenses";
+import IncomeSourcesChart from "../../components/dashboard/IncomeSourcesChart";
+import Last5Income from "../../components/dashboard/last5Income";
 const Home = () => {
   useUserAuth();
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+
   const fetchDashboardData = async () => {
     if (loading) return;
     setLoading(true);
@@ -34,12 +38,12 @@ const Home = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchDashboardData();
     return () => {};
   }, []);
-  
+
   return (
     <DashboardLayout activeMenu="Dashboard">
       <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-7xl mx-auto">
@@ -64,26 +68,52 @@ const Home = () => {
             color="bg-red-600"
           />
         </div>
-        
+
         {/* Dashboard Content Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {/* Recent Transactions - Takes 2 columns on desktop */}
           <div className="xl:col-span-2">
-            <RecentTransactions 
-              transactions={dashboardData?.receentTransactions} 
-              onSeeMore={() => navigate('/expense')}
+            <RecentTransactions
+              transactions={dashboardData?.recentTransactions}
+              onSeeMore={() => navigate("/expense")}
             />
           </div>
-          
+
           {/* Finance Overview - Takes 1 column on desktop */}
           <div className="xl:col-span-1">
-            <FinanceOverview 
-              totalBalance={dashboardData?.totalBalance || 0} 
-              totalIncome={dashboardData?.totalIncome || 0} 
+            <FinanceOverview
+              totalBalance={dashboardData?.totalBalance || 0}
+              totalIncome={dashboardData?.totalIncome || 0}
               totalExpense={dashboardData?.totalExpense || 0}
             />
-            <ExpenseTransactions transactions={dashboardData?.last30daysExpenses?.transactions || {}} onSeeMore={navigate("/expense")}/>
           </div>
+        </div>
+
+        {/* Second Row - Expenses and Last 30 Days Expenses */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <First5Expenses
+            transactions={
+              dashboardData?.recentTransactions
+                ?.filter((t) => t.type === "expense")
+                .slice(0, 5) || []
+            }
+            onSeeMore={() => navigate("/expense")}
+          />
+          <Last30DaysExpenses
+            transactions={dashboardData?.last30daysExpenses?.transactions || []} // Note: "transaction" not "transactions"
+            onSeeMore={() => navigate("/expense")}
+          />
+        </div>
+
+        {/* Third Row - Last 60 Days Income Chart and Income Transactions */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+          <IncomeSourcesChart
+            transactions={dashboardData?.last60daysIncome?.transactions || []}
+          />
+          <Last5Income
+            transactions={dashboardData?.recentTransactions || []}
+            onSeeMore={() => navigate("/income")}
+          />
         </div>
       </div>
     </DashboardLayout>

@@ -3,7 +3,7 @@ import { LuArrowRight } from "react-icons/lu";
 import TransactionsInfoCard from "../cards/TransactionsInfoCard";
 import moment from "moment";
 
-const ExpenseTransactions = ({ transactions, onSeeMore }) => {
+const First5Expenses = ({ transactions, onSeeMore }) => {
   return (
     <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-100 h-full">
       <div className="flex items-center justify-between mb-4 sm:mb-6">
@@ -26,7 +26,7 @@ const ExpenseTransactions = ({ transactions, onSeeMore }) => {
             icon={expense.icon}
             date={moment(expense.date).format("DD-MMM-YYYY")}
             amount={expense.amount}
-            type="expense"
+            type={expense.type || "expense"}
             hideDeleteBtn
           />
         ))}
@@ -42,4 +42,4 @@ const ExpenseTransactions = ({ transactions, onSeeMore }) => {
   );
 };
 
-export default ExpenseTransactions;
+export default First5Expenses;
