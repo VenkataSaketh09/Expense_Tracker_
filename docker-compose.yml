@@ -5,7 +5,7 @@ services:
     build: ./backend
     container_name: expense_tracker_backend
     ports:
-      -"5000:5000"
+      - "5000:5000"
     env_file:
       - ./backend/.env
     restart: always
@@ -13,7 +13,7 @@ services:
     build: ./frontend/expense_tracker
     container_name: expense_tracker_frontend
     ports:
-      -"5173:80"
+      - "5173:80"
     depends_on:
       - backend
     restart: always
