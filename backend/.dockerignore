@@ -1,0 +1,14 @@
+# dependencies
+node_modules
+npm-debug.log
+
+# environment files
+.env
+
+# git
+.git
+.gitignore
+
+# docker
+Dockerfile
+docker-compose.yml
