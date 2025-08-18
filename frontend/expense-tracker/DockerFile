@@ -3,7 +3,7 @@
 #Stage1:build the vite app
 
 #set base image
-FROM node:18-alpie AS build
+FROM node:18-alpine AS build
 
 #setup working directory
 WORKDIR /app
