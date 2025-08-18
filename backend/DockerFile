@@ -1,0 +1,20 @@
+#set base image
+FROM node:18-alpine
+
+#set working directory inside container
+WORKDIR /app
+
+#copy package.json and package-lock.json first (for better cache). now the dependenciesn move to /app in container
+COPY package*.json ./
+
+#Install dependencies(node_modules)
+RUN npm Install
+
+#Copy Source Code
+COPY . .
+
+#Expose backend Port
+EXPOSE 5000
+
+#start the server
+CMD ["npm","run","server"]

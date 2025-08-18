@@ -1,0 +1,44 @@
+#it is a multi stage build
+
+#Stage1:build the vite app
+
+#set base image
+FROM node:18-alpie AS build
+
+#setup working directory
+WORKDIR /app
+
+#copy dependencies(package-lock-json and package-json)
+COPY package*.json ./
+
+#install all dependencies inside the container
+RUN npm install
+
+#copy source code into container
+COPY . .
+
+#Run fronted build script (This generates static files (HTML, JS, CSS, images) into the /app/dist folder.)
+RUN npm run build
+
+
+# Stage 2: Serve with nginx
+
+#set image (Starts a new image stage based on Nginx Alpine (lightweight web server). 
+
+FROM nginx:alpine
+#This stage does not include Node.js (keeping image size small).
+#Only contains the built static files + Nginx to serve them.)
+
+
+COPY --from=build /app/dist /usr/share/nginx/html
+# Copies the dist folder (output from the build stage) into the default Nginx web root (/usr/share/nginx/html).
+# This means Nginx will serve your React/Vite app’s production build.
+
+
+#Expose port (Tells Docker the container will listen on port 80 (Nginx default HTTP port))
+EXPOSE 80
+
+#Runs Nginx in the foreground (not as a background process).
+# daemon off; is required so the container doesn’t exit immediately.
+# This is the default command to start Nginx and keep it running.
+CMD ["nginx", "-g", "daemon off;"]
