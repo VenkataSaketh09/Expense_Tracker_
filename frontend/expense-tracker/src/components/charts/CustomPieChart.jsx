@@ -7,8 +7,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import CustomTooltip from "./CustomTooltip.jsx";
-
+import CustomTooltip from "./CustomTooltip";
 const CustomPieChart = ({
   data,
   label,
