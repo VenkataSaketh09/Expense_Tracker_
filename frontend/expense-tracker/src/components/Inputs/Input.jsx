@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
-const Input = ({value, onChange, label, placeholder, type, disabled = false}) => {
+const Input = ({value, onChange, label, placeholder, type, disabled = false, name, icon, required, showPasswordToggle = true}) => {
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     
@@ -22,17 +22,19 @@ const Input = ({value, onChange, label, placeholder, type, disabled = false}) =>
     return (
         <div className="space-y-2">
             {/* Label */}
-            <label className={`block text-sm font-semibold transition-colors duration-200 ${
-                disabled 
-                    ? 'text-gray-400' 
-                    : isFocused 
-                        ? 'text-purple-600' 
-                        : value 
-                            ? 'text-gray-700' 
-                            : 'text-gray-600'
-            }`}>
-                {label}
-            </label>
+            {label && (
+                <label className={`block text-sm font-semibold transition-colors duration-200 ${
+                    disabled 
+                        ? 'text-gray-400' 
+                        : isFocused 
+                            ? 'text-purple-600' 
+                            : value 
+                                ? 'text-gray-700' 
+                                : 'text-gray-600'
+                }`}>
+                    {label}
+                </label>
+            )}
             
             {/* Input Container */}
             <div className={`relative flex items-center transition-all duration-300 ${
@@ -43,22 +45,31 @@ const Input = ({value, onChange, label, placeholder, type, disabled = false}) =>
                         : 'ring-1 ring-gray-300'
             } rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md`}>
                 
+                {/* Icon */}
+                {icon && (
+                    <div className="pl-4 pr-2 text-gray-400">
+                        {icon}
+                    </div>
+                )}
+                
                 {/* Input Field */}
                 <input 
                     type={type === "password" ? showPassword ? "text" : "password" : type} 
                     placeholder={placeholder} 
                     className={`w-full px-4 py-3 sm:py-4 bg-transparent border-none outline-none text-gray-900 placeholder-gray-400 text-sm sm:text-base transition-all duration-200 ${
                         type === "password" ? 'pr-12' : ''
-                    } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
+                    } ${disabled ? 'cursor-not-allowed opacity-60' : ''} ${icon ? 'pl-2' : 'pl-4'}`}
                     value={value} 
                     onChange={(e) => onChange(e)}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     disabled={disabled}
+                    name={name}
+                    required={required}
                 />
                 
                 {/* Password Toggle Button */}
-                {type === "password" && (
+                {type === "password" && showPasswordToggle && (
                     <button
                         type="button"
                         onClick={toggleShowPassword}

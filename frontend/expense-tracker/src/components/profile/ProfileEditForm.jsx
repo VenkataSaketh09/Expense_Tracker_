@@ -85,6 +85,7 @@ const ProfileEditForm = ({ user }) => {
           <Input
             type="text"
             name="userName"
+            label="Full Name"
             placeholder="Enter your name"
             value={formData.userName}
             onChange={handleInputChange}
@@ -98,6 +99,7 @@ const ProfileEditForm = ({ user }) => {
           <Input
             type="email"
             name="email"
+            label="Email Address"
             placeholder="Enter your email"
             value={formData.email}
             onChange={handleInputChange}

@@ -179,11 +179,12 @@ const PasswordChangeForm = () => {
               placeholder="Enter your current password"
               icon={<LuLock className="w-5 h-5" />}
               required
+              showPasswordToggle={false}
             />
             <button
               type="button"
               onClick={() => togglePasswordVisibility("current")}
-              className="absolute right-3 top-8 text-gray-500 hover:text-gray-700"
+              className="absolute right-3 top-12 text-gray-500 hover:text-gray-700"
             >
               {showPasswords.current ? (
                 <LuEyeOff className="w-5 h-5" />
@@ -204,11 +205,12 @@ const PasswordChangeForm = () => {
               placeholder="Enter your new password"
               icon={<LuLock className="w-5 h-5" />}
               required
+              showPasswordToggle={false}
             />
             <button
               type="button"
               onClick={() => togglePasswordVisibility("new")}
-              className="absolute right-3 top-8 text-gray-500 hover:text-gray-700"
+              className="absolute right-3 top-12 text-gray-500 hover:text-gray-700"
             >
               {showPasswords.new ? (
                 <LuEyeOff className="w-5 h-5" />
@@ -240,11 +242,12 @@ const PasswordChangeForm = () => {
               placeholder="Confirm your new password"
               icon={<LuLock className="w-5 h-5" />}
               required
+              showPasswordToggle={false}
             />
             <button
               type="button"
               onClick={() => togglePasswordVisibility("confirm")}
-              className="absolute right-3 top-8 text-gray-500 hover:text-gray-700"
+              className="absolute right-3 top-12 text-gray-500 hover:text-gray-700"
             >
               {showPasswords.confirm ? (
                 <LuEyeOff className="w-5 h-5" />
