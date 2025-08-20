@@ -1,63 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
 import IncomeOverview from "../../components/income/IncomeOverview";
 import IncomeTransactionsList from "../../components/income/IncomeTransactionsList";
 import Modal from "../../components/Layouts/Modal";
 import ConfirmDeleteModal from "../../components/Layouts/ConfirmDeleteModal";
 import AddIncomeForm from "../../components/income/AddIncomeForm";
-import toast from "react-hot-toast";
+import { 
+  useIncome, 
+  useAddIncome, 
+  useDeleteIncome, 
+  useDownloadIncomeExcel 
+} from "../../hooks/useQueries";
+
 const Income = () => {
   const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false);
-  const [incomeData, setIncomeData] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState({
     isOpen: false,
     item: null,
   });
-  const fetchIncomeDetails = async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        `${API_PATHS.INCOME.GET_ALL_INCOME}`
-      );
-      if (response.data && response.data.income) {
-        setIncomeData(response.data.income);
-      }
-      console.log(response.data);
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Failed to fetch income data";
-      toast.error(`Error: ${errorMessage}`);
-      console.log("Error in fetching income data", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const handleAddIncome = async (income) => {
-    const loadingToast = toast.loading("Adding income...");
 
-    try {
-      const response = await axiosInstance.post(
-        `${API_PATHS.INCOME.ADD_INCOME}`,
-        income
-      );
-      if (response.data) {
-        // Refresh the income data after adding
-        fetchIncomeDetails();
-        setOpenAddIncomeModal(false);
-        toast.dismiss(loadingToast);
-        toast.success("Income added successfully! 🎉");
-      }
-    } catch (error) {
-      toast.dismiss(loadingToast);
-      const errorMessage =
-        error.response?.data?.message || "Failed to add income";
-      toast.error(`Error: ${errorMessage}`);
-      console.log("Error in adding income:", error);
-    }
+  // React Query hooks
+  const { data: incomeData = [], isLoading, error } = useIncome();
+  const addIncomeMutation = useAddIncome();
+  const deleteIncomeMutation = useDeleteIncome();
+  const downloadExcelMutation = useDownloadIncomeExcel();
+
+  const handleAddIncome = async (income) => {
+    await addIncomeMutation.mutateAsync(income);
+    setOpenAddIncomeModal(false);
   };
 
   const handleDeleteRequest = (item) => {
@@ -69,27 +39,8 @@ const Income = () => {
 
   const handleDeleteConfirm = async () => {
     if (!deleteConfirmation.item) return;
-
-    const loadingToast = toast.loading("Deleting income...");
-
-    try {
-      const response = await axiosInstance.delete(
-        API_PATHS.INCOME.DELETE_INCOME(deleteConfirmation.item._id)
-      );
-      if (response.data) {
-        // Refresh the income data after deletion
-        fetchIncomeDetails();
-        setDeleteConfirmation({ isOpen: false, item: null });
-        toast.dismiss(loadingToast);
-        toast.success("Income deleted successfully! 🗑️");
-      }
-    } catch (error) {
-      toast.dismiss(loadingToast);
-      const errorMessage =
-        error.response?.data?.message || "Failed to delete income";
-      toast.error(`Error: ${errorMessage}`);
-      console.log("Error in deleting income:", error);
-    }
+    await deleteIncomeMutation.mutateAsync(deleteConfirmation.item._id);
+    setDeleteConfirmation({ isOpen: false, item: null });
   };
 
   const handleDeleteCancel = () => {
@@ -97,52 +48,43 @@ const Income = () => {
   };
 
   const handleDownloadExcel = async () => {
-    const loadingToast = toast.loading("Preparing download...");
-
-    try {
-      const response = await axiosInstance.get(
-        `${API_PATHS.INCOME.DOWNLOAD_INCOME}`,
-        {
-          responseType: "blob", // Important for file downloads
-        }
-      );
-
-      // Create blob link to download
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-
-      // Get filename from response headers or use default
-      const contentDisposition = response.headers["content-disposition"];
-      let filename = "income_details.xlsx";
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (filenameMatch) {
-          filename = filenameMatch[1];
-        }
-      }
-
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-
-      toast.dismiss(loadingToast);
-      toast.success("Excel file downloaded successfully! 📊");
-    } catch (error) {
-      toast.dismiss(loadingToast);
-      const errorMessage =
-        error.response?.data?.message || "Failed to download file";
-      toast.error(`Error: ${errorMessage}`);
-      console.log("Error in downloading excel:", error);
-    }
+    await downloadExcelMutation.mutateAsync();
   };
 
-  useEffect(() => {
-    fetchIncomeDetails();
-    return () => {};
-  }, []);
+  // Show loading state
+  if (isLoading) {
+    return (
+      <DashboardLayout activeMenu="Income">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-700"></div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <DashboardLayout activeMenu="Income">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">Failed to load income data</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-violet-700 text-white rounded-lg hover:bg-violet-800"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout activeMenu="Income">
       <div className="space-y-4 sm:space-y-6">
@@ -167,7 +109,10 @@ const Income = () => {
           title="Add Income"
         >
           <div>
-            <AddIncomeForm onAddIncome={handleAddIncome} />
+            <AddIncomeForm 
+              onAddIncome={handleAddIncome}
+              isLoading={addIncomeMutation.isPending}
+            />
           </div>
         </Modal>
 
@@ -180,6 +125,7 @@ const Income = () => {
           message="Are you sure you want to delete this income entry?"
           itemName={deleteConfirmation.item?.source}
           type="income"
+          isLoading={deleteIncomeMutation.isPending}
         />
       </div>
     </DashboardLayout>

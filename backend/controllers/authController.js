@@ -6,7 +6,7 @@ const generateToken = (id) => {
 };
 
 const registerUser = async (req, res) => {
-  const { userName, email, password, profileImageUrl } = req.body;
+  const { userName, email, password } = req.body;
   if (!userName || !email || !password) {
     return res.status(400).json({ message: "Fill required fields" });
   }
@@ -21,7 +21,6 @@ const registerUser = async (req, res) => {
       userName,
       email,
       password,
-      profileImageUrl,
     });
     res.status(201).json({
       id: user._id,
@@ -74,7 +73,7 @@ const getUserInfo = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { userName, email, profileImageUrl } = req.body;
+    const { userName, email } = req.body;
 
     // Validate input
     if (!userName || !email) {
@@ -99,7 +98,6 @@ const updateUserProfile = async (req, res) => {
       {
         userName,
         email,
-        profileImageUrl,
       },
       { new: true, runValidators: true }
     ).select("-password");

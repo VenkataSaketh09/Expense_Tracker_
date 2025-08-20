@@ -11,6 +11,7 @@ const ConfirmDeleteModal = ({
   message = "Are you sure you want to delete this item?",
   itemName = "",
   type = "item", // "income" or "expense" or "item"
+  isLoading = false,
 }) => {
   if (!isOpen) return null;
 
@@ -65,6 +66,7 @@ const ConfirmDeleteModal = ({
                 type="button"
                 className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                 onClick={onClose}
+                disabled={isLoading}
               >
                 <IoIosClose size={24} />
               </button>
@@ -90,18 +92,29 @@ const ConfirmDeleteModal = ({
               <div className="flex space-x-3">
                 <button
                   type="button"
-                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
+                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={onClose}
+                  disabled={isLoading}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className={`flex-1 px-4 py-3 ${styles.confirmBtn} text-white rounded-xl transition-colors font-medium flex items-center justify-center space-x-2`}
+                  className={`flex-1 px-4 py-3 ${styles.confirmBtn} text-white rounded-xl transition-colors font-medium flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed`}
                   onClick={onConfirm}
+                  disabled={isLoading}
                 >
-                  <LuTrash2 className="w-4 h-4" />
-                  <span>Delete</span>
+                  {isLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Deleting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <LuTrash2 className="w-4 h-4" />
+                      <span>Delete</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>

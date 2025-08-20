@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
 import { useUserAuth } from "../../hooks/useUserAuth";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
 import { IoMdCard } from "react-icons/io";
 import { LuHandCoins, LuWalletMinimal } from "react-icons/lu";
 import InfoCard from "../../components/cards/InfoCard";
@@ -15,34 +13,48 @@ import First5Expenses from "../../components/dashboard/First5Expenses";
 import Last30DaysExpenses from "../../components/dashboard/Last30DaysExpenses";
 import IncomeSourcesChart from "../../components/dashboard/IncomeSourcesChart";
 import Last5Income from "../../components/dashboard/Last5Income";
+import { useDashboardData } from "../../hooks/useQueries";
+
 const Home = () => {
   useUserAuth();
   const navigate = useNavigate();
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  
+  // Use React Query for dashboard data
+  const { data: dashboardData, isLoading, error } = useDashboardData();
 
-  const fetchDashboardData = async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        `${API_PATHS.DASHBOARD.GET_DATA}`
-      );
-      if (response.data) {
-        setDashboardData(response.data);
-      }
-      console.log("dashboard data:", response.data);
-    } catch (err) {
-      console.log("Something went wrong. please try again,", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Show loading state
+  if (isLoading) {
+    return (
+      <DashboardLayout activeMenu="Dashboard">
+        <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-7xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-700"></div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
-  useEffect(() => {
-    fetchDashboardData();
-    return () => {};
-  }, []);
+  // Show error state
+  if (error) {
+    return (
+      <DashboardLayout activeMenu="Dashboard">
+        <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-7xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">Failed to load dashboard data</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-violet-700 text-white rounded-lg hover:bg-violet-800"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout activeMenu="Dashboard">

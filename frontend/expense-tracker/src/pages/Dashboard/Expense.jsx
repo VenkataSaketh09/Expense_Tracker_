@@ -1,66 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
 import ExpenseOverview from "../../components/expense/ExpenseOverview";
 import ExpenseTransactionsList from "../../components/expense/ExpenseTransactionsList";
 import Modal from "../../components/Layouts/Modal";
 import ConfirmDeleteModal from "../../components/Layouts/ConfirmDeleteModal";
 import AddExpenseForm from "../../components/expense/AddExpenseForm";
-import toast from "react-hot-toast";
+import { 
+  useExpenses, 
+  useAddExpense, 
+  useDeleteExpense, 
+  useDownloadExpenseExcel 
+} from "../../hooks/useQueries";
 
 const Expense = () => {
   const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false);
-  const [expenseData, setExpenseData] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState({
     isOpen: false,
     item: null,
   });
 
-  const fetchExpenseDetails = async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        `${API_PATHS.Expense.GET_ALL_Expense}`
-      );
-      if (response.data && response.data.expense) {
-        setExpenseData(response.data.expense);
-      }
-      console.log(response.data);
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Failed to fetch expense data";
-      toast.error(`Error: ${errorMessage}`);
-      console.log("Error in fetching expense data", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // React Query hooks
+  const { data: expenseData = [], isLoading, error } = useExpenses();
+  const addExpenseMutation = useAddExpense();
+  const deleteExpenseMutation = useDeleteExpense();
+  const downloadExcelMutation = useDownloadExpenseExcel();
 
   const handleAddExpense = async (expense) => {
-    const loadingToast = toast.loading("Adding expense...");
-
-    try {
-      const response = await axiosInstance.post(
-        `${API_PATHS.Expense.ADD_Expense}`,
-        expense
-      );
-      if (response.data) {
-        // Refresh the expense data after adding
-        fetchExpenseDetails();
-        setOpenAddExpenseModal(false);
-        toast.dismiss(loadingToast);
-        toast.success("Expense added successfully! 💸");
-      }
-    } catch (error) {
-      toast.dismiss(loadingToast);
-      const errorMessage =
-        error.response?.data?.message || "Failed to add expense";
-      toast.error(`Error: ${errorMessage}`);
-      console.log("Error in adding expense:", error);
-    }
+    await addExpenseMutation.mutateAsync(expense);
+    setOpenAddExpenseModal(false);
   };
 
   const handleDeleteRequest = (item) => {
@@ -72,27 +39,8 @@ const Expense = () => {
 
   const handleDeleteConfirm = async () => {
     if (!deleteConfirmation.item) return;
-
-    const loadingToast = toast.loading("Deleting expense...");
-
-    try {
-      const response = await axiosInstance.delete(
-        API_PATHS.Expense.DELETE_Expense(deleteConfirmation.item._id)
-      );
-      if (response.data) {
-        // Refresh the expense data after deletion
-        fetchExpenseDetails();
-        setDeleteConfirmation({ isOpen: false, item: null });
-        toast.dismiss(loadingToast);
-        toast.success("Expense deleted successfully! 🗑️");
-      }
-    } catch (error) {
-      toast.dismiss(loadingToast);
-      const errorMessage =
-        error.response?.data?.message || "Failed to delete expense";
-      toast.error(`Error: ${errorMessage}`);
-      console.log("Error in deleting expense:", error);
-    }
+    await deleteExpenseMutation.mutateAsync(deleteConfirmation.item._id);
+    setDeleteConfirmation({ isOpen: false, item: null });
   };
 
   const handleDeleteCancel = () => {
@@ -100,52 +48,42 @@ const Expense = () => {
   };
 
   const handleDownloadExcel = async () => {
-    const loadingToast = toast.loading("Preparing download...");
-
-    try {
-      const response = await axiosInstance.get(
-        `${API_PATHS.Expense.DOWNLOAD_Expense}`,
-        {
-          responseType: "blob", // Important for file downloads
-        }
-      );
-
-      // Create blob link to download
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-
-      // Get filename from response headers or use default
-      const contentDisposition = response.headers["content-disposition"];
-      let filename = "expense_details.xlsx";
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (filenameMatch) {
-          filename = filenameMatch[1];
-        }
-      }
-
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-
-      toast.dismiss(loadingToast);
-      toast.success("Excel file downloaded successfully! 📊");
-    } catch (error) {
-      toast.dismiss(loadingToast);
-      const errorMessage =
-        error.response?.data?.message || "Failed to download file";
-      toast.error(`Error: ${errorMessage}`);
-      console.log("Error in downloading excel:", error);
-    }
+    await downloadExcelMutation.mutateAsync();
   };
 
-  useEffect(() => {
-    fetchExpenseDetails();
-    return () => {};
-  }, []);
+  // Show loading state
+  if (isLoading) {
+    return (
+      <DashboardLayout activeMenu="Expense">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-700"></div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <DashboardLayout activeMenu="Expense">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">Failed to load expense data</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-violet-700 text-white rounded-lg hover:bg-violet-800"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout activeMenu="Expense">
@@ -171,7 +109,10 @@ const Expense = () => {
           title="Add Expense"
         >
           <div>
-            <AddExpenseForm onAddExpense={handleAddExpense} />
+            <AddExpenseForm 
+              onAddExpense={handleAddExpense}
+              isLoading={addExpenseMutation.isPending}
+            />
           </div>
         </Modal>
 
@@ -184,6 +125,7 @@ const Expense = () => {
           message="Are you sure you want to delete this expense entry?"
           itemName={deleteConfirmation.item?.category}
           type="expense"
+          isLoading={deleteExpenseMutation.isPending}
         />
       </div>
     </DashboardLayout>

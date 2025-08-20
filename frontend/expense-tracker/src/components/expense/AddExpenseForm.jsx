@@ -4,7 +4,7 @@ import Input from "../Inputs/Input";
 import EmojiPickerPopup from "../Inputs/EmojiPickerPopup";
 import toast from "react-hot-toast";
 
-const AddExpenseForm = ({ onAddExpense }) => {
+const AddExpenseForm = ({ onAddExpense, isLoading = false }) => {
   const [expense, setExpense] = useState({
     icon: "",
     category: "",
@@ -53,6 +53,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
         <EmojiPickerPopup
           icon={expense.icon}
           onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
+          disabled={isLoading}
         />
       </div>
 
@@ -64,6 +65,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
           value={expense.category}
           onChange={(e) => handleChange("category", e.target.value)}
           label="Expense Category"
+          disabled={isLoading}
         />
 
         <Input
@@ -72,6 +74,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
           value={expense.amount}
           onChange={(e) => handleChange("amount", e.target.value)}
           label="Amount"
+          disabled={isLoading}
         />
 
         <Input
@@ -80,6 +83,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
           value={expense.date}
           onChange={(e) => handleChange("date", e.target.value)}
           label="Date"
+          disabled={isLoading}
         />
       </div>
 
@@ -90,10 +94,20 @@ const AddExpenseForm = ({ onAddExpense }) => {
           className="w-full bg-gradient-to-r from-purple-700 to-purple-800 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:hover:scale-100"
           onClick={handleSubmit}
           disabled={
-            !expense.category.trim() || !expense.amount || !expense.date
+            isLoading ||
+            !expense.category.trim() || 
+            !expense.amount || 
+            !expense.date
           }
         >
-          Add Expense
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              Adding Expense...
+            </div>
+          ) : (
+            "Add Expense"
+          )}
         </button>
       </div>
     </div>

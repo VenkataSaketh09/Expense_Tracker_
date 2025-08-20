@@ -53,6 +53,26 @@ const prepareExpenseLineChartData = (data = []) => {
   return chartData;
 };
 
+// Helper function to safely access user data
+export const getUserData = (user) => {
+  // Handle both possible data structures
+  // 1. user.user (nested structure)
+  // 2. user (direct structure)
+  return user?.user || user || {};
+};
+
+// Helper function to get user name
+export const getUserName = (user) => {
+  const userData = getUserData(user);
+  return userData?.userName || 'Guest User';
+};
+
+// Helper function to get user email
+export const getUserEmail = (user) => {
+  const userData = getUserData(user);
+  return userData?.email || 'guest@example.com';
+};
+
 export {
   validateEmail,
   addThousandsSeparator,

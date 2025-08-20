@@ -1,14 +1,17 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState } from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
-import { UserContext } from "../../context/UserContext";
 import ProfileEditForm from "../../components/profile/ProfileEditForm";
 import PasswordChangeForm from "../../components/profile/PasswordChangeForm";
 import ProfileOverview from "../../components/profile/ProfileOverview";
 import { LuUser, LuLock, LuEye } from "react-icons/lu";
+import { useUserInfo } from "../../hooks/useQueries";
+import { getUserName, getUserEmail } from "../../utils/helper";
 
 const Profile = () => {
-  const { user } = useContext(UserContext);
   const [activeTab, setActiveTab] = useState("overview");
+  
+  // Use React Query for user data
+  const { data: user, isLoading, error } = useUserInfo();
 
   const tabs = [
     {
@@ -44,6 +47,43 @@ const Profile = () => {
     }
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <DashboardLayout activeMenu="Profile">
+        <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-700"></div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <DashboardLayout activeMenu="Profile">
+        <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">Failed to load profile data</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-violet-700 text-white rounded-lg hover:bg-violet-800"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const userName = getUserName(user);
+  const userEmail = getUserEmail(user);
+
   return (
     <DashboardLayout activeMenu="Profile">
       <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
@@ -61,27 +101,19 @@ const Profile = () => {
             <div className="mt-4 sm:mt-0">
               <div className="flex items-center space-x-3">
                 <div className="relative">
-                  {user?.user?.profileImageUrl ? (
-                    <img
-                      src={user.user.profileImageUrl}
-                      alt="Profile"
-                      className="w-12 h-12 rounded-full object-cover border-2 border-purple-100"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-lg font-bold">
-                        {user?.user?.userName?.charAt(0)?.toUpperCase() || "U"}
-                      </span>
-                    </div>
-                  )}
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center">
+                    <span className="text-white text-lg font-bold">
+                      {userName.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">
-                    {user?.user?.userName || "Guest User"}
+                    {userName}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {user?.user?.email || "guest@example.com"}
+                    {userEmail}
                   </p>
                 </div>
               </div>

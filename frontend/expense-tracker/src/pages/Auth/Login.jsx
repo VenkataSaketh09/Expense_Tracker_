@@ -5,15 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { validateEmail } from "../../utils/helper";
 import { API_PATHS } from "../../utils/apiPaths";
-import { useContext } from "react";
-import { UserContext } from "../../context/UserContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { updateUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,12 +34,13 @@ const Login = () => {
       const { token, user } = response.data;
       if (token) {
         localStorage.setItem("token", token);
-        updateUser(response.data); // Store the entire response to match getUserInfo structure
+        // Invalidate and refetch user data
+        queryClient.invalidateQueries({ queryKey: ['user'] });
         navigate("/dashboard");
       }
     } catch (err) {
-      if (err.response && error.response.data.message) {
-        setError(error.response.data.message);
+      if (err.response && err.response.data.message) {
+        setError(err.response.data.message);
       } else {
         setError("Something went wrong. please try again.");
       }
@@ -105,46 +105,27 @@ const Login = () => {
               </div>
             )}
 
-            {/* Login Button */}
+            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 sm:py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300 text-sm sm:text-base"
+              className="w-full bg-gradient-to-r from-purple-700 to-purple-800 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
             >
-              Sign In
+              Login
             </button>
-
-            {/* Divider */}
-            <div className="relative my-6 sm:my-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-xs sm:text-sm">
-                <span className="px-4 bg-white text-gray-500 font-medium">
-                  New to our platform?
-                </span>
-              </div>
-            </div>
 
             {/* Sign Up Link */}
             <div className="text-center">
-              <p className="text-sm sm:text-base text-gray-600">
-                Don't have an Account?{" "}
+              <p className="text-sm text-gray-600">
+                Don't have an account?{" "}
                 <Link
-                  className="font-semibold text-purple-600 hover:text-purple-700 underline decoration-2 underline-offset-2 transition-colors duration-200"
-                  to="/signup"
+                  to="/signUp"
+                  className="text-purple-600 hover:text-purple-700 font-semibold transition-colors duration-200"
                 >
-                  Create Account
+                  Sign up here
                 </Link>
               </p>
             </div>
           </form>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="text-xs sm:text-sm text-gray-500">
-            By continuing, you agree to our Terms of Service and Privacy Policy
-          </p>
         </div>
       </div>
     </AuthLayout>

@@ -4,7 +4,7 @@ import Input from "../Inputs/Input";
 import EmojiPickerPopup from "../Inputs/EmojiPickerPopup";
 import toast from "react-hot-toast";
 
-const AddIncomeForm = ({ onAddIncome }) => {
+const AddIncomeForm = ({ onAddIncome, isLoading = false }) => {
   const [income, setIncome] = useState({
     icon: "",
     source: "",
@@ -53,6 +53,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
         <EmojiPickerPopup
           icon={income.icon}
           onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
+          disabled={isLoading}
         />
       </div>
 
@@ -64,6 +65,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
           value={income.source}
           onChange={(e) => handleChange("source", e.target.value)}
           label="Income Source"
+          disabled={isLoading}
         />
 
         <Input
@@ -72,6 +74,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
           value={income.amount}
           onChange={(e) => handleChange("amount", e.target.value)}
           label="Amount"
+          disabled={isLoading}
         />
 
         <Input
@@ -80,6 +83,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
           value={income.date}
           onChange={(e) => handleChange("date", e.target.value)}
           label="Date"
+          disabled={isLoading}
         />
       </div>
 
@@ -89,9 +93,16 @@ const AddIncomeForm = ({ onAddIncome }) => {
           type="button"
           className="w-full bg-gradient-to-r from-purple-700 to-purple-800 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:hover:scale-100"
           onClick={handleSubmit}
-          disabled={!income.source.trim() || !income.amount || !income.date}
+          disabled={isLoading || !income.source.trim() || !income.amount || !income.date}
         >
-          Add Income
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              Adding Income...
+            </div>
+          ) : (
+            "Add Income"
+          )}
         </button>
       </div>
     </div>

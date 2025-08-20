@@ -1,17 +1,17 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import SideMenu from './SideMenu';
-import { UserContext } from '../../context/UserContext';
 import Navbar from './Navbar';
+import { useUserInfo } from '../../hooks/useQueries';
 
 const DashboardLayout = ({activeMenu, children}) => {
-    const {user} = useContext(UserContext)
+    const { data: user, isLoading } = useUserInfo();
     
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-indigo-50">
             {/* Navbar */}
             <Navbar activeMenu={activeMenu} />
             
-            {user && (
+            {user && !isLoading && (
                 <div className="flex">
                     {/* Desktop Sidebar */}
                     <div className="hidden lg:block w-64 xl:w-72 fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white shadow-xl border-r border-gray-200 z-30">
@@ -34,8 +34,8 @@ const DashboardLayout = ({activeMenu, children}) => {
                 </div>
             )}
             
-            {/* Loading state when no user */}
-            {!user && (
+            {/* Loading state when no user or loading */}
+            {(!user || isLoading) && (
                 <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl mb-4 shadow-lg animate-pulse">
